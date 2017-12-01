@@ -12,27 +12,31 @@ from sklearn.preprocessing import OneHotEncoder
 help(OneHotEncoder)
 ```
 ### 官方Examples
- |  Given a dataset with three features and four samples, we let the encoder
- |  find the maximum value per feature and transform the data to a binary
- |  one-hot encoding.
- |  
- |  >>> from sklearn.preprocessing import OneHotEncoder
- |  >>> enc = OneHotEncoder()
- |  >>> enc.fit([[0, 0, 3], [1, 1, 0], [0, 2, 1], [1, 0, 2]])  # doctest: +ELLIPSIS
- |  OneHotEncoder(categorical_features='all', dtype=<... 'numpy.float64'>,
- |         handle_unknown='error', n_values='auto', sparse=True)
- |  >>> enc.n_values_
- |  array([2, 3, 4])
- |  >>> enc.feature_indices_
- |  array([0, 2, 5, 9])
- |  >>> enc.transform([[0, 1, 1]]).toarray()
- |  array([[ 1.,  0.,  0.,  1.,  0.,  0.,  1.,  0.,  0.]])
- |
+
+     |  Given a dataset with three features and four samples, we let the encoder
+     |  find the maximum value per feature and transform the data to a binary
+     |  one-hot encoding.
+     |  
+     |  >>> from sklearn.preprocessing import OneHotEncoder
+     |  >>> enc = OneHotEncoder()
+     |  >>> enc.fit([[0, 0, 3], [1, 1, 0], [0, 2, 1], [1, 0, 2]])  # doctest: +ELLIPSIS
+     |  OneHotEncoder(categorical_features='all', dtype=<... 'numpy.float64'>,
+     |         handle_unknown='error', n_values='auto', sparse=True)
+     |  >>> enc.n_values_
+     |  array([2, 3, 4])
+     |  >>> enc.feature_indices_
+     |  array([0, 2, 5, 9])
+     |  >>> enc.transform([[0, 1, 1]]).toarray()
+     |  array([[ 1.,  0.,  0.,  1.,  0.,  0.,  1.,  0.,  0.]])
+     |
+     |  n_values：是一个数组，长度为每个特征的所有出现类别的总和。
+     |  feature_indices_：是对n_values的一个累加。指明第n组的index从feature_indices_[n]开始
 
 ### 针对pandas的实例
 ```python
 items.head()
 ```
+
 id  |item_nbr| family|  class|  perishable| family_id
  ---------|------|----|---|------|----
 0   |96995  |GROCERY I  |1093   |0  |0
@@ -43,8 +47,8 @@ id  |item_nbr| family|  class|  perishable| family_id
 
 **其中**
 ```python
-len(items['class'].value_counts()) #337
-len(items.family.value_counts()) #33
+len(items['class'].value_counts()) # is 337
+len(items.family.value_counts()) # is 33
 ```
 
 由于family是**string**类型，而OneHotEncoder的帮助文档中有
@@ -56,8 +60,9 @@ items['family_id'] = items.apply(lambda row:d[row['family']],axis=1)
 ```
 
 **enc.fit()也接受直接传入一个dataframe作为参数的，会对所传dataframe的所有列进行one_hot**
-**注意：** 如果对一列进行one_hot:传入的必须是`items[['family_id']]` 而不是 `items['family_id']`，因为前者类型是一个**DataFrame**,而后者是**Series**，当然，如果你非要传入后者，可以进行`reshape(len(items),1) `哈哈
-  针对本例中的item：
+**注意：** 如果对一列进行one_hot:传入的必须是`items[['family_id']]` 而不是 `items['family_id']`，因为前者类型是一个**DataFrame**,而后者是**Series**，当然，如果你非要传入后者，可以进行`reshape(len(items),1) `哈哈哈
+  
+针对本例中的item：
 ```python
   enc.fit(items[['family_id']])
   enc.fit(items[['family_id','class']])
